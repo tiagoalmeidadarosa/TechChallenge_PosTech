@@ -1,0 +1,6 @@
+@TechChallenge_Fase01_HostAddress = http://localhost:5249
+
+GET {{TechChallenge_Fase01_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
