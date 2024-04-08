@@ -1,7 +1,6 @@
 ﻿using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using TechChallenge_Fase01.Data;
+using TechChallenge_Fase01.Interfaces;
 using TechChallenge_Fase01.Models;
 using TechChallenge_Fase01.Models.Requests;
 using TechChallenge_Fase01.Validators;
@@ -10,9 +9,9 @@ namespace TechChallenge_Fase01.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public sealed class ContactsController(AppDbContext dbContext) : ControllerBase
+    public sealed class ContactsController(IContactRepository contactRepository) : ControllerBase
     {
-        private readonly AppDbContext _dbContext = dbContext;
+        private readonly IContactRepository _contactRepository = contactRepository;
 
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Contact>), StatusCodes.Status200OK)]
@@ -28,10 +27,7 @@ namespace TechChallenge_Fase01.Controllers
                 return ValidationProblem();
             }
 
-            var ddd = request.DDD;
-            var contacts = await _dbContext.Contacts
-                .Where(x => ddd == null || x.DDD == ddd)
-                .ToListAsync();
+            var contacts = await _contactRepository.GetAllAsync(request.DDD);
 
             return Ok(contacts);
         }
@@ -41,7 +37,7 @@ namespace TechChallenge_Fase01.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Contact>> Get(int id)
         {
-            var contact = await _dbContext.Contacts.FindAsync(id);
+            var contact = await _contactRepository.GetByIdAsync(id);
 
             if (contact is null)
             {
@@ -73,8 +69,7 @@ namespace TechChallenge_Fase01.Controllers
                 DDD = request.DDD,
             };
 
-            _dbContext.Contacts.Add(contact);
-            await _dbContext.SaveChangesAsync();
+            await _contactRepository.CreateAsync(contact);
 
             return CreatedAtAction(nameof(Get), new { id = contact.Id }, request);
         }
@@ -94,7 +89,7 @@ namespace TechChallenge_Fase01.Controllers
                 return ValidationProblem();
             }
 
-            var contact = await _dbContext.Contacts.FindAsync(id);
+            var contact = await _contactRepository.GetByIdAsync(id);
 
             if (contact is null)
             {
@@ -106,7 +101,7 @@ namespace TechChallenge_Fase01.Controllers
             contact.Email = request.Email;
             contact.DDD = request.DDD;
 
-            await _dbContext.SaveChangesAsync();
+            await _contactRepository.UpdateAsync(contact);
 
             return NoContent();
         }
@@ -116,15 +111,14 @@ namespace TechChallenge_Fase01.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> Delete(int id)
         {
-            var contact = await _dbContext.Contacts.FindAsync(id);
+            var contact = await _contactRepository.GetByIdAsync(id);
 
             if (contact is null)
             {
                 return NotFound("Contact not found.");
             }
 
-            _dbContext.Contacts.Remove(contact);
-            await _dbContext.SaveChangesAsync();
+            await _contactRepository.DeleteAsync(contact);
 
             return NoContent();
         }

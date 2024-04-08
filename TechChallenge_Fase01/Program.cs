@@ -1,6 +1,8 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using TechChallenge_Fase01.Data;
+using TechChallenge_Fase01.Interfaces;
+using TechChallenge_Fase01.Repository;
 using TechChallenge_Fase01.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +15,7 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 {
     opt.UseInMemoryDatabase("Contacts");
 });
+builder.Services.AddTransient<IContactRepository, ContactRepository>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
