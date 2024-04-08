@@ -15,7 +15,7 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 {
     opt.UseInMemoryDatabase("Contacts");
 });
-builder.Services.AddTransient<IContactRepository, ContactRepository>();
+builder.Services.AddScoped<IContactRepository, ContactRepository>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
