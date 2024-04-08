@@ -1,6 +1,6 @@
 ﻿namespace TechChallenge_Fase01.Models.Requests
 {
-    public class CreateContactRequest
+    public class ContactRequest
     {
         public string Name { get; set; } = default!;
         public string Phone { get; set; } = default!;

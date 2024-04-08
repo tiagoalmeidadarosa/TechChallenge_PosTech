@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TechChallenge_Fase01.Data;
 using TechChallenge_Fase01.Models;
@@ -9,11 +10,13 @@ namespace TechChallenge_Fase01.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ContactsController(AppDbContext dbContext) : ControllerBase
+    public sealed class ContactsController(AppDbContext dbContext) : ControllerBase
     {
         private readonly AppDbContext _dbContext = dbContext;
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Contact>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<IEnumerable<Contact>>> GetAll([FromQuery] FilteredContactsRequest request)
         {
             FilteredContactsRequestValidator validator = new();
@@ -21,7 +24,8 @@ namespace TechChallenge_Fase01.Controllers
 
             if (!result.IsValid)
             {
-                return BadRequest(result.Errors);
+                result.AddToModelState(ModelState);
+                return ValidationProblem();
             }
 
             var ddd = request.DDD;
@@ -33,21 +37,34 @@ namespace TechChallenge_Fase01.Controllers
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(Contact), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Contact>> Get(int id)
         {
             var contact = await _dbContext.Contacts.FindAsync(id);
 
             if (contact is null)
             {
-                return NotFound();
+                return NotFound("Contact not found.");
             }
 
-            return contact;
+            return Ok(contact);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Contact>> Post([FromBody] CreateContactRequest request)
+        [ProducesResponseType(typeof(Contact), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<Contact>> Post([FromBody] ContactRequest request)
         {
+            ContactRequestValidator validator = new();
+            var result = validator.Validate(request);
+
+            if (!result.IsValid)
+            {
+                result.AddToModelState(ModelState);
+                return ValidationProblem();
+            }
+
             var contact = new Contact()
             {
                 Name = request.Name,
@@ -63,13 +80,25 @@ namespace TechChallenge_Fase01.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put(int id, [FromBody] Contact request)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> Put(int id, [FromBody] ContactRequest request)
         {
+            ContactRequestValidator validator = new();
+            var result = validator.Validate(request);
+
+            if (!result.IsValid)
+            {
+                result.AddToModelState(ModelState);
+                return ValidationProblem();
+            }
+
             var contact = await _dbContext.Contacts.FindAsync(id);
 
             if (contact is null)
             {
-                return NotFound();
+                return NotFound("Contact not found.");
             }
 
             contact.Name = request.Name;
@@ -83,13 +112,15 @@ namespace TechChallenge_Fase01.Controllers
         }
 
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> Delete(int id)
         {
             var contact = await _dbContext.Contacts.FindAsync(id);
 
             if (contact is null)
             {
-                return NotFound();
+                return NotFound("Contact not found.");
             }
 
             _dbContext.Contacts.Remove(contact);
