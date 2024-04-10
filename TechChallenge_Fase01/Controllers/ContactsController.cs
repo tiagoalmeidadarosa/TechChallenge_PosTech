@@ -9,9 +9,10 @@ namespace TechChallenge_Fase01.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public sealed class ContactsController(IContactRepository contactRepository) : ControllerBase
+    public sealed class ContactsController(IContactRepository contactRepository, ILogger<ContactsController> logger) : ControllerBase
     {
         private readonly IContactRepository _contactRepository = contactRepository;
+        private readonly ILogger<ContactsController> _logger = logger;
 
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Contact>), StatusCodes.Status200OK)]
@@ -71,6 +72,8 @@ namespace TechChallenge_Fase01.Controllers
 
             await _contactRepository.CreateAsync(contact);
 
+            _logger.LogInformation("Contact created: {ContactId}", contact.Id);
+
             return CreatedAtAction(nameof(Get), new { id = contact.Id }, request);
         }
 
@@ -103,6 +106,8 @@ namespace TechChallenge_Fase01.Controllers
 
             await _contactRepository.UpdateAsync(contact);
 
+            _logger.LogInformation("Contact updated: {ContactId}", contact.Id);
+
             return NoContent();
         }
 
@@ -119,6 +124,8 @@ namespace TechChallenge_Fase01.Controllers
             }
 
             await _contactRepository.DeleteAsync(contact);
+
+            _logger.LogInformation("Contact deleted: {ContactId}", contact.Id);
 
             return NoContent();
         }
