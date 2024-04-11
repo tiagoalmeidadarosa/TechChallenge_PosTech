@@ -1,5 +1,6 @@
 ﻿using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using TechChallenge_Fase01.Interfaces;
 using TechChallenge_Fase01.Models;
 using TechChallenge_Fase01.Models.Requests;
@@ -9,10 +10,11 @@ namespace TechChallenge_Fase01.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public sealed class ContactsController(IContactRepository contactRepository, ILogger<ContactsController> logger) : ControllerBase
+    public sealed class ContactsController(IContactRepository contactRepository, ILogger<ContactsController> logger, IMemoryCache cache) : ControllerBase
     {
         private readonly IContactRepository _contactRepository = contactRepository;
         private readonly ILogger<ContactsController> _logger = logger;
+        private readonly IMemoryCache _cache = cache;
 
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Contact>), StatusCodes.Status200OK)]
@@ -28,7 +30,14 @@ namespace TechChallenge_Fase01.Controllers
                 return ValidationProblem();
             }
 
+            var cacheKey = $"contacts_ddd_{request.DDD}";
+            if (_cache.TryGetValue(cacheKey, out IList<Contact>? cachedContacts))
+            {
+                return Ok(cachedContacts);
+            }
+
             var contacts = await _contactRepository.GetAllAsync(request.DDD);
+            _cache.Set(cacheKey, contacts, TimeSpan.FromMinutes(5));
 
             return Ok(contacts);
         }
@@ -72,6 +81,9 @@ namespace TechChallenge_Fase01.Controllers
 
             await _contactRepository.CreateAsync(contact);
 
+            var cacheKey = $"contacts_ddd_{request.DDD}";
+            _cache.Remove(cacheKey);
+
             _logger.LogInformation("Contact created: {ContactId}", contact.Id);
 
             return CreatedAtAction(nameof(Get), new { id = contact.Id }, request);
@@ -99,12 +111,18 @@ namespace TechChallenge_Fase01.Controllers
                 return NotFound("Contact not found.");
             }
 
+            if (contact.DDD != request.DDD)
+            {
+                _cache.Remove($"contacts_ddd_{contact.DDD}");
+            }
+
             contact.Name = request.Name;
             contact.Phone = request.Phone;
             contact.Email = request.Email;
             contact.DDD = request.DDD;
 
             await _contactRepository.UpdateAsync(contact);
+            _cache.Remove($"contacts_ddd_{request.DDD}");
 
             _logger.LogInformation("Contact updated: {ContactId}", contact.Id);
 
@@ -124,6 +142,9 @@ namespace TechChallenge_Fase01.Controllers
             }
 
             await _contactRepository.DeleteAsync(contact);
+
+            var cacheKey = $"contacts_ddd_{contact.DDD}";
+            _cache.Remove(cacheKey);
 
             _logger.LogInformation("Contact deleted: {ContactId}", contact.Id);
 

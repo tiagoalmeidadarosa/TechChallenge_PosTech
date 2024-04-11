@@ -15,6 +15,8 @@ var configuration = new ConfigurationBuilder()
 
 builder.Services.AddControllers();
 builder.Services.AddValidatorsFromAssemblyContaining<ContactRequestValidator>();
+builder.Services.AddMemoryCache();
+
 builder.Services.AddDbContext<AppDbContext>(opt =>
 {
     opt.UseSqlServer(configuration.GetConnectionString("Contacts"),
@@ -25,6 +27,7 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
         });
 });
 builder.Services.AddScoped<IContactRepository, ContactRepository>();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
