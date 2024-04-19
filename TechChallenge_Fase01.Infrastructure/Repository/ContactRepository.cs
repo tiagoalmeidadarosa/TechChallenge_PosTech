@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TechChallenge_Fase01.Data;
-using TechChallenge_Fase01.Interfaces;
-using TechChallenge_Fase01.Models;
+using TechChallenge_Fase01.Core.Interfaces;
+using TechChallenge_Fase01.Core.Models;
 
-namespace TechChallenge_Fase01.Repository
+namespace TechChallenge_Fase01.Infrastructure.Repository
 {
     public class ContactRepository(AppDbContext dbContext) : IContactRepository
     {

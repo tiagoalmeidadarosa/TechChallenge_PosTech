@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace TechChallenge_Fase01.Migrations
+namespace TechChallenge_Fase01.Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TechChallenge_Fase01.Models;
+using TechChallenge_Fase01.Core.Models;
 
-namespace TechChallenge_Fase01.Data
+namespace TechChallenge_Fase01.Infrastructure
 {
     public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
     {

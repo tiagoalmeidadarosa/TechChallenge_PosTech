@@ -1,9 +1,10 @@
 ﻿using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using TechChallenge_Fase01.Interfaces;
-using TechChallenge_Fase01.Models;
+using TechChallenge_Fase01.Core.Interfaces;
+using TechChallenge_Fase01.Core.Models;
 using TechChallenge_Fase01.Models.Requests;
+using TechChallenge_Fase01.Models.Responses;
 using TechChallenge_Fase01.Validators;
 
 namespace TechChallenge_Fase01.Controllers
@@ -17,10 +18,11 @@ namespace TechChallenge_Fase01.Controllers
         private readonly IMemoryCache _cache = cache;
 
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<Contact>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<ContactResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<IEnumerable<Contact>>> GetAll([FromQuery] FilteredContactsRequest request)
+        public async Task<ActionResult<IEnumerable<ContactResponse>>> GetAll([FromQuery] FilteredContactsRequest request)
         {
+            //Validate request model
             FilteredContactsRequestValidator validator = new();
             var result = validator.Validate(request);
 
@@ -30,22 +32,34 @@ namespace TechChallenge_Fase01.Controllers
                 return ValidationProblem();
             }
 
+            //Verify if data is cached
             var cacheKey = $"contacts_ddd_{request.DDD}";
-            if (_cache.TryGetValue(cacheKey, out IList<Contact>? cachedContacts))
+            if (_cache.TryGetValue(cacheKey, out IEnumerable<ContactResponse>? cachedContacts))
             {
                 return Ok(cachedContacts);
             }
 
+            //Return data from database
             var contacts = await _contactRepository.GetAllAsync(request.DDD);
-            _cache.Set(cacheKey, contacts, TimeSpan.FromMinutes(5));
+            var contactsResponse = contacts.Select(x => new ContactResponse()
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Phone = x.Phone,
+                Email = x.Email,
+                DDD = x.DDD,
+            });
 
-            return Ok(contacts);
+            //Set cache for a new request
+            _cache.Set(cacheKey, contactsResponse, TimeSpan.FromMinutes(5));
+
+            return Ok(contactsResponse);
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(Contact), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ContactResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Contact>> Get(int id)
+        public async Task<ActionResult<ContactResponse>> Get(int id)
         {
             var contact = await _contactRepository.GetByIdAsync(id);
 
@@ -54,13 +68,20 @@ namespace TechChallenge_Fase01.Controllers
                 return NotFound("Contact not found.");
             }
 
-            return Ok(contact);
+            return Ok(new ContactResponse()
+            {
+                Id = contact.Id,
+                Name = contact.Name,
+                Phone = contact.Phone,
+                Email = contact.Email,
+                DDD = contact.DDD,
+            });
         }
 
         [HttpPost]
         [ProducesResponseType(typeof(Contact), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<Contact>> Post([FromBody] ContactRequest request)
+        public async Task<ActionResult<ContactResponse>> Post([FromBody] ContactRequest request)
         {
             ContactRequestValidator validator = new();
             var result = validator.Validate(request);

@@ -1,4 +1,4 @@
-﻿namespace TechChallenge_Fase01.Models
+﻿namespace TechChallenge_Fase01.Core.Models
 {
     public class Contact
     {

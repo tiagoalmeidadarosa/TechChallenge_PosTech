@@ -1,6 +1,6 @@
-﻿using TechChallenge_Fase01.Models;
+﻿using TechChallenge_Fase01.Core.Models;
 
-namespace TechChallenge_Fase01.Interfaces
+namespace TechChallenge_Fase01.Core.Interfaces
 {
     public interface IContactRepository
     {
