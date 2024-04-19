@@ -17,6 +17,8 @@ namespace TechChallenge_Fase01.Controllers
         private readonly ILogger<ContactsController> _logger = logger;
         private readonly IMemoryCache _cache = cache;
 
+        private const string CacheKeyPrefix = "contacts_ddd_";
+
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<ContactResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
@@ -33,7 +35,7 @@ namespace TechChallenge_Fase01.Controllers
             }
 
             //Verify if data is cached
-            var cacheKey = $"contacts_ddd_{request.DDD}";
+            var cacheKey = $"{CacheKeyPrefix}{request.DDD}";
             if (_cache.TryGetValue(cacheKey, out IEnumerable<ContactResponse>? cachedContacts))
             {
                 return Ok(cachedContacts);
@@ -101,9 +103,7 @@ namespace TechChallenge_Fase01.Controllers
             };
 
             await _contactRepository.CreateAsync(contact);
-
-            var cacheKey = $"contacts_ddd_{request.DDD}";
-            _cache.Remove(cacheKey);
+            InvalidateCache(request.DDD);
 
             _logger.LogInformation("Contact created: {ContactId}", contact.Id);
 
@@ -134,7 +134,7 @@ namespace TechChallenge_Fase01.Controllers
 
             if (contact.DDD != request.DDD)
             {
-                _cache.Remove($"contacts_ddd_{contact.DDD}");
+                InvalidateCache(contact.DDD);
             }
 
             contact.Name = request.Name;
@@ -143,7 +143,7 @@ namespace TechChallenge_Fase01.Controllers
             contact.DDD = request.DDD;
 
             await _contactRepository.UpdateAsync(contact);
-            _cache.Remove($"contacts_ddd_{request.DDD}");
+            InvalidateCache(request.DDD);
 
             _logger.LogInformation("Contact updated: {ContactId}", contact.Id);
 
@@ -163,13 +163,17 @@ namespace TechChallenge_Fase01.Controllers
             }
 
             await _contactRepository.DeleteAsync(contact);
-
-            var cacheKey = $"contacts_ddd_{contact.DDD}";
-            _cache.Remove(cacheKey);
+            InvalidateCache(contact.DDD);
 
             _logger.LogInformation("Contact deleted: {ContactId}", contact.Id);
 
             return NoContent();
+        }
+
+        private void InvalidateCache(int ddd)
+        {
+            _cache.Remove($"{CacheKeyPrefix}{ddd}");
+            _cache.Remove(CacheKeyPrefix);
         }
     }
 }
