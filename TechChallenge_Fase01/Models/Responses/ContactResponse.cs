@@ -1,4 +1,4 @@
-﻿namespace TechChallenge_Fase01.Models.Responses
+﻿namespace TechChallenge_Fase01.API.Models.Responses
 {
     public class ContactResponse
     {

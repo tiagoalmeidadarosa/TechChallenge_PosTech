@@ -1,4 +1,4 @@
-﻿namespace TechChallenge_Fase01.Models.Requests
+﻿namespace TechChallenge_Fase01.API.Models.Requests
 {
     public class ContactRequest
     {

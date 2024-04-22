@@ -1,13 +1,13 @@
 ﻿using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using TechChallenge_Fase01.API.Models.Requests;
+using TechChallenge_Fase01.API.Models.Responses;
+using TechChallenge_Fase01.API.Validators;
 using TechChallenge_Fase01.Core.Interfaces;
 using TechChallenge_Fase01.Core.Models;
-using TechChallenge_Fase01.Models.Requests;
-using TechChallenge_Fase01.Models.Responses;
-using TechChallenge_Fase01.Validators;
 
-namespace TechChallenge_Fase01.Controllers
+namespace TechChallenge_Fase01.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

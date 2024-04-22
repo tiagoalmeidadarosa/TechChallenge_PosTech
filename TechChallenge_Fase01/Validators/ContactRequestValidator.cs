@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using TechChallenge_Fase01.Models.Requests;
+using TechChallenge_Fase01.API.Models.Requests;
 
-namespace TechChallenge_Fase01.Validators
+namespace TechChallenge_Fase01.API.Validators
 {
     internal sealed class ContactRequestValidator : AbstractValidator<ContactRequest>
     {
