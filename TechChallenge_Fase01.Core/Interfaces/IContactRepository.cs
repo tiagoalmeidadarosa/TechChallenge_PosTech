@@ -1,4 +1,4 @@
-﻿using TechChallenge_Fase01.Core.Models;
+﻿using TechChallenge_Fase01.Core.Entities;
 
 namespace TechChallenge_Fase01.Core.Interfaces
 {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TechChallenge_Fase01.Core.Entities;
 using TechChallenge_Fase01.Core.Interfaces;
-using TechChallenge_Fase01.Core.Models;
 
 namespace TechChallenge_Fase01.Infrastructure.Repository
 {

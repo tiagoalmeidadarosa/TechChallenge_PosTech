@@ -4,8 +4,8 @@ using Microsoft.Extensions.Caching.Memory;
 using TechChallenge_Fase01.API.Models.Requests;
 using TechChallenge_Fase01.API.Models.Responses;
 using TechChallenge_Fase01.API.Validators;
+using TechChallenge_Fase01.Core.Entities;
 using TechChallenge_Fase01.Core.Interfaces;
-using TechChallenge_Fase01.Core.Models;
 
 namespace TechChallenge_Fase01.API.Controllers
 {
