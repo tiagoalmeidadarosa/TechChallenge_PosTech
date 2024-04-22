@@ -1,6 +1,6 @@
-﻿namespace TechChallenge_Fase01.Models
+﻿namespace TechChallenge_Fase01.API.Models.Responses
 {
-    public class Contact
+    public class ContactResponse
     {
         public int Id { get; set; }
         public string Name { get; set; } = default!;

@@ -1,9 +1,9 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using TechChallenge_Fase01.Data;
-using TechChallenge_Fase01.Interfaces;
-using TechChallenge_Fase01.Repository;
-using TechChallenge_Fase01.Validators;
+using TechChallenge_Fase01.API.Validators;
+using TechChallenge_Fase01.Core.Interfaces;
+using TechChallenge_Fase01.Infrastructure;
+using TechChallenge_Fase01.Infrastructure.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
