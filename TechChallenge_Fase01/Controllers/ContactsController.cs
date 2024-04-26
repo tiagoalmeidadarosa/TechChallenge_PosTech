@@ -107,7 +107,7 @@ namespace TechChallenge_Fase01.API.Controllers
 
             _logger.LogInformation("Contact created: {ContactId}", contact.Id);
 
-            return CreatedAtAction(nameof(Get), new { id = contact.Id }, request);
+            return Created(nameof(Get), new ContactResponse { Id = contact.Id });
         }
 
         [HttpPut("{id}")]
