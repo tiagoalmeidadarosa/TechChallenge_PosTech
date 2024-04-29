@@ -8,12 +8,12 @@ using TechChallenge_Fase01.Tests.Helpers;
 
 namespace TechChallenge_Fase01.Tests.Controllers;
 
-public class ContactsTests : IClassFixture<CustomApplicationFactory<Program>>
+public class ContactsIntegrationTests : IClassFixture<CustomApplicationFactory<Program>>
 {
     private readonly CustomApplicationFactory<Program> _factory;
     private readonly HttpClient _client;
 
-    public ContactsTests(CustomApplicationFactory<Program> factory)
+    public ContactsIntegrationTests(CustomApplicationFactory<Program> factory)
     {
         _factory = factory;
         _client = factory.CreateClient(new WebApplicationFactoryClientOptions
