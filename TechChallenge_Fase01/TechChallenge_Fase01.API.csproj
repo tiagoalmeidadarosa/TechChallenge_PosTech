@@ -18,4 +18,8 @@
     <ProjectReference Include="..\TechChallenge_Fase01.Infrastructure\TechChallenge_Fase01.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="TechChallenge_Fase01.Tests" />
+  </ItemGroup>
+
 </Project>
