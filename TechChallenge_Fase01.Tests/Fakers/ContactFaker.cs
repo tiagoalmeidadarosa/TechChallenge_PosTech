@@ -7,7 +7,6 @@ namespace TechChallenge_Fase01.Tests.Fakers
     {
         public ContactFaker(string locale) : base(locale)
         {
-            RuleFor(x => x.Id, f => f.UniqueIndex);
             RuleFor(x => x.Name, f => f.Person.FullName);
             RuleFor(x => x.Phone, f => f.Random.ReplaceNumbers($"99#######"));
             RuleFor(x => x.Email, f => f.Person.Email);
