@@ -30,14 +30,6 @@ namespace TechChallenge_Fase01.Tests.Controllers
         }
 
         [Fact]
-        public void GenerateContactFaker_ShouldNotBeNull()
-        {
-            var contact = _contactFaker.Generate();
-
-            Assert.NotNull(contact);
-        }
-
-        [Fact]
         public async Task PostContact_WithValidFields_ShouldReturnContact()
         {
             var contact = _contactFaker.Generate();
