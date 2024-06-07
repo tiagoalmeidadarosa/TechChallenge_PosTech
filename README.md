@@ -1,3 +1,5 @@
+[![Run Integration Tests](https://github.com/tiagoalmeidadarosa/TechChallenge_Fase01/actions/workflows/integration-tests.yml/badge.svg)](https://github.com/tiagoalmeidadarosa/TechChallenge_Fase01/actions/workflows/integration-tests.yml)
+
 # TechChallenge
 
 Fase 1:
