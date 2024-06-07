@@ -1,4 +1,4 @@
-name: Run Integration Tests
+name: Build and test
 
 on:
   push:
@@ -25,4 +25,4 @@ jobs:
         run: dotnet build --no-restore
 
       - name: Run integration tests
-        run: dotnet test --no-build --filter "Category=Integration"
+        run: dotnet test --no-build
