@@ -1,9 +1,56 @@
 services:
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: sqlserver
     environment:
       SA_PASSWORD: "SqlServer2019!"
       ACCEPT_EULA: "Y"
       MSSQL_PID: "Developer"
     ports:
       - "14433:1433"
+    networks:
+      - mynw
+    expose:
+      - 1433
+      
+  tech-challenge-api:
+    image: ${DOCKER_REGISTRY-}tech-challenge-api
+    ports:
+      - 8080:8080
+    build:
+      context: .
+      dockerfile: ./TechChallenge_Fase01/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+    depends_on:
+      - sqlserver
+    networks:
+      - mynw
+      
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    networks:
+      - mynw
+      
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./grafana:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - mynw
+      
+networks:
+  mynw:
