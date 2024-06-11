@@ -19,7 +19,7 @@ services:
       - 8080:8080
     build:
       context: .
-      dockerfile: ./TechChallenge_Fase01/Dockerfile
+      dockerfile: ./Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
