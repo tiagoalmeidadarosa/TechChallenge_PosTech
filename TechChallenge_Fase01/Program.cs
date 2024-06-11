@@ -16,7 +16,7 @@ public class Program
 
         var configuration = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json")
-            .AddUserSecrets("29d1745d-0a5b-4813-9caf-54636cf68461")
+            .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
             .Build();
 
         // Add services to the container.
@@ -43,12 +43,8 @@ public class Program
 
         var app = builder.Build();
 
-        // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
+        app.UseSwagger();
+        app.UseSwaggerUI();        
 
         app.UseHttpsRedirection();
 
