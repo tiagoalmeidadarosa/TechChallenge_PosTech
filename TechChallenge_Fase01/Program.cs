@@ -4,6 +4,7 @@ using TechChallenge_Fase01.API.Validators;
 using TechChallenge_Fase01.Core.Interfaces;
 using TechChallenge_Fase01.Infrastructure;
 using TechChallenge_Fase01.Infrastructure.Repository;
+using Prometheus;
 
 namespace TechChallenge_Fase01;
 
@@ -15,6 +16,7 @@ public class Program
 
         var configuration = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json")
+            .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
             .Build();
 
         // Add services to the container.
@@ -37,21 +39,21 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+        builder.Services.UseHttpClientMetrics();
 
         var app = builder.Build();
 
-        // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
+        app.UseSwagger();
+        app.UseSwaggerUI();        
 
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
 
         app.MapControllers();
+
+        app.UseMetricServer();
+        app.UseHttpMetrics();
 
         app.Run();
     }
