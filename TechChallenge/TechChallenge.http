@@ -1,0 +1,6 @@
+@TechChallenge_HostAddress = http://localhost:5249
+
+GET {{TechChallenge_HostAddress}}/api/contacts/
+Accept: application/json
+
+###
