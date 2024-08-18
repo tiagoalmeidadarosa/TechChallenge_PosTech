@@ -17,19 +17,16 @@ namespace TechChallenge.Consumer
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            if (_logger.IsEnabled(LogLevel.Information))
-            {
-                _logger.LogInformation("Worker running at: {Time}", DateTimeOffset.Now);
-            }
+            _logger.LogInformation("Worker running at: {Time}", DateTimeOffset.Now);
 
             while (!stoppingToken.IsCancellationRequested)
             {
                 using var connection = _rabbitMqService.CreateChannel();
                 using var model = connection.CreateModel();
-                model.QueueDeclare(queue: "ContactsQueue", durable: false, exclusive: false, autoDelete: false, arguments: null);
+                model.QueueDeclare(queue: "ContactsQueue", durable: true, exclusive: false, autoDelete: false, arguments: null);
 
-                var consumer = new EventingBasicConsumer(model);
-                consumer.Received += (sender, eventArgs) =>
+                var consumer = new AsyncEventingBasicConsumer(model);
+                consumer.Received += async (sender, eventArgs) =>
                 {
                     var body = eventArgs.Body.ToArray();
                     var message = Encoding.UTF8.GetString(body);
@@ -42,9 +39,11 @@ namespace TechChallenge.Consumer
                     }
 
                     _dbContext.Contacts.Add(contact);
-                    _dbContext.SaveChangesAsync();
+                    await _dbContext.SaveChangesAsync();
 
                     _logger.LogInformation("Contact received from the queue: {ContactName}", contact.Name);
+
+                    await Task.CompletedTask;
                 };
 
                 model.BasicConsume("ContactsQueue", true, consumer);

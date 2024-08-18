@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TechChallenge.Core.Entities;
 using TechChallenge.Core.Interfaces;
-using TechChallenge.Infrastructure;
 
 namespace TechChallenge.Infrastructure.Repository
 {

@@ -41,7 +41,7 @@ namespace TechChallenge.API.Register.Controllers
 
             using var connection = _rabbitMqService.CreateChannel();
             using var model = connection.CreateModel();
-            model.QueueDeclare(queue: "ContactsQueue", durable: false, exclusive: false, autoDelete: false, arguments: null);
+            model.QueueDeclare(queue: "ContactsQueue", durable: true, exclusive: false, autoDelete: false, arguments: null);
 
             var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(contact));
             model.BasicPublish(string.Empty, "ContactsQueue", basicProperties: null, body);

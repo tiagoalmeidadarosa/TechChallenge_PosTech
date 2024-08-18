@@ -20,7 +20,7 @@ namespace TechChallenge.API.Common.Services
                 UserName = _configuration.Username,
                 Password = _configuration.Password,
                 HostName = _configuration.HostName,
-                //DispatchConsumersAsync = true
+                DispatchConsumersAsync = true
             };
             var channel = connection.CreateConnection();
 

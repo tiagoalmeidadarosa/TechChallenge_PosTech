@@ -1,9 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TechChallenge.API.Common;
 using TechChallenge.Consumer;
-using TechChallenge.Core.Interfaces;
 using TechChallenge.Infrastructure;
-using TechChallenge.Infrastructure.Repository;
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -24,7 +22,6 @@ builder.Services.AddDbContextFactory<AppDbContext>(opt =>
             sqlServerOptions.EnableRetryOnFailure(maxRetryCount: 4, maxRetryDelay: TimeSpan.FromSeconds(3), errorNumbersToAdd: []);
         });
 });
-builder.Services.AddSingleton<IContactRepository, ContactRepository>();
 
 var host = builder.Build();
 host.Run();
