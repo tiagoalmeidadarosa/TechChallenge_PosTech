@@ -1,8 +1,5 @@
 ﻿using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
-using RabbitMQ.Client;
-using System.Text;
-using System.Text.Json;
 using TechChallenge.API.Common.Models.Requests;
 using TechChallenge.API.Common.Services;
 using TechChallenge.API.Common.Validators;
@@ -20,7 +17,7 @@ namespace TechChallenge.API.Register.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
-        public ActionResult Post([FromBody] ContactRequest request)
+        public async Task<ActionResult> Post([FromBody] ContactRequest request)
         {
             ContactRequestValidator validator = new();
             var result = validator.Validate(request);
@@ -39,12 +36,8 @@ namespace TechChallenge.API.Register.Controllers
                 DDD = request.DDD,
             };
 
-            using var connection = _rabbitMqService.CreateChannel();
-            using var model = connection.CreateModel();
-            model.QueueDeclare(queue: "ContactsQueue", durable: true, exclusive: false, autoDelete: false, arguments: null);
-
-            var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(contact));
-            model.BasicPublish(string.Empty, "ContactsQueue", basicProperties: null, body);
+            var endpoint = await _rabbitMqService.GetEndpoint();
+            await endpoint.Send(contact);
 
             _logger.LogInformation("Contact sent to the queue");
 

@@ -1,30 +1,24 @@
-﻿using Microsoft.Extensions.Options;
-using RabbitMQ.Client;
+﻿using MassTransit;
+using Microsoft.Extensions.Options;
 using TechChallenge.API.Common.Configuration;
 
 namespace TechChallenge.API.Common.Services
 {
     public interface IRabbitMqService
     {
-        IConnection CreateChannel();
+        Task<ISendEndpoint> GetEndpoint();
     }
 
-    public class RabbitMqService(IOptions<RabbitMqConfiguration> options) : IRabbitMqService
+    public class RabbitMqService(IOptions<RabbitMqConfiguration> options, IBus bus) : IRabbitMqService
     {
         private readonly RabbitMqConfiguration _configuration = options.Value;
+        private readonly IBus _bus = bus;
 
-        public IConnection CreateChannel()
+        public async Task<ISendEndpoint> GetEndpoint()
         {
-            ConnectionFactory connection = new()
-            {
-                UserName = _configuration.Username,
-                Password = _configuration.Password,
-                HostName = _configuration.HostName,
-                DispatchConsumersAsync = true
-            };
-            var channel = connection.CreateConnection();
+            var endpoint = await _bus.GetSendEndpoint(new Uri($"queue:{_configuration.QueueName}"));
 
-            return channel;
+            return endpoint;
         }
     }
 }

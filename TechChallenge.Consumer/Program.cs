@@ -1,27 +1,52 @@
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using TechChallenge.API.Common;
+using TechChallenge.API.Common.Configuration;
 using TechChallenge.Consumer;
+using TechChallenge.Consumer.Events;
 using TechChallenge.Infrastructure;
 
 var builder = Host.CreateApplicationBuilder(args);
 
-var configuration = new ConfigurationBuilder()
+builder.Configuration
     .AddJsonFile("appsettings.json")
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
     .Build();
 
 builder.Services.AddHostedService<Worker>();
-builder.Services.AddRabbitMqService(configuration);
-
+builder.Services.AddRabbitMqService(builder.Configuration);
 builder.Services.AddDbContextFactory<AppDbContext>(opt =>
 {
-    opt.UseSqlServer(configuration.GetConnectionString("Contacts"),
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("Contacts"),
         sqlServerOptions =>
         {
             sqlServerOptions.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
             sqlServerOptions.EnableRetryOnFailure(maxRetryCount: 4, maxRetryDelay: TimeSpan.FromSeconds(3), errorNumbersToAdd: []);
         });
 });
+builder.Services.AddMassTransit((x =>
+{
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        var rabbitMqConfiguration = context.GetRequiredService<IOptions<RabbitMqConfiguration>>().Value;
+
+        cfg.Host(rabbitMqConfiguration.HostName, "/", h =>
+        {
+            h.Username(rabbitMqConfiguration.Username);
+            h.Password(rabbitMqConfiguration.Password);
+        });
+
+        cfg.ReceiveEndpoint(rabbitMqConfiguration.QueueName, e =>
+        {
+            e.ConfigureConsumer<RegisterContact>(context);
+        });
+
+        cfg.ConfigureEndpoints(context);
+    });
+
+    x.AddConsumer<RegisterContact>();
+}));
 
 var host = builder.Build();
-host.Run();
+await host.RunAsync();
