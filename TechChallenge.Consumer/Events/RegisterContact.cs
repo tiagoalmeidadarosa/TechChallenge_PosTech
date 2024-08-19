@@ -1,21 +1,19 @@
 ﻿using MassTransit;
-using Microsoft.EntityFrameworkCore;
 using TechChallenge.Core.Entities;
-using TechChallenge.Infrastructure;
+using TechChallenge.Core.Interfaces;
 
 namespace TechChallenge.Consumer.Events
 {
-    public class RegisterContact(ILogger<Worker> logger, IDbContextFactory<AppDbContext> dbContextFactory) : IConsumer<Contact>
+    public class RegisterContact(ILogger<Worker> logger, IContactRepository contactRepository) : IConsumer<Contact>
     {
         private readonly ILogger<Worker> _logger = logger;
-        private readonly AppDbContext _dbContext = dbContextFactory.CreateDbContext()
-;
+        private readonly IContactRepository _contactRepository = contactRepository;
+
         public async Task Consume(ConsumeContext<Contact> context)
         {
             var contact = context.Message;
 
-            _dbContext.Contacts.Add(contact);
-            await _dbContext.SaveChangesAsync();
+            await _contactRepository.CreateAsync(contact);
 
             _logger.LogInformation("Contact received from the queue: {ContactName}", contact.Name);
         }

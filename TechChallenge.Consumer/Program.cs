@@ -5,7 +5,9 @@ using TechChallenge.API.Common;
 using TechChallenge.API.Common.Configuration;
 using TechChallenge.Consumer;
 using TechChallenge.Consumer.Events;
+using TechChallenge.Core.Interfaces;
 using TechChallenge.Infrastructure;
+using TechChallenge.Infrastructure.Repository;
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -16,7 +18,7 @@ builder.Configuration
 
 builder.Services.AddHostedService<Worker>();
 builder.Services.AddRabbitMqService(builder.Configuration);
-builder.Services.AddDbContextFactory<AppDbContext>(opt =>
+builder.Services.AddDbContext<AppDbContext>(opt =>
 {
     opt.UseSqlServer(builder.Configuration.GetConnectionString("Contacts"),
         sqlServerOptions =>
@@ -47,6 +49,7 @@ builder.Services.AddMassTransit((x =>
 
     x.AddConsumer<RegisterContact>();
 }));
+builder.Services.AddScoped<IContactRepository, ContactRepository>();
 
 var host = builder.Build();
 await host.RunAsync();
