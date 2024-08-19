@@ -1,7 +1,6 @@
 using MassTransit;
 using Microsoft.Extensions.Options;
-using TechChallenge.API.Common;
-using TechChallenge.API.Common.Configuration;
+using TechChallenge.API.Register.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +15,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddRabbitMqService(builder.Configuration);
+
+builder.Services.Configure<RabbitMqConfiguration>(a => builder.Configuration.GetSection(nameof(RabbitMqConfiguration)).Bind(a));
 builder.Services.AddMassTransit((x =>
 {
     x.UsingRabbitMq((context, cfg) =>

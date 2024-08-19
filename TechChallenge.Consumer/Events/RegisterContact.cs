@@ -15,7 +15,7 @@ namespace TechChallenge.Consumer.Events
 
             await _contactRepository.CreateAsync(contact);
 
-            _logger.LogInformation("Contact received from the queue: {ContactName}", contact.Name);
+            _logger.LogInformation("Contact registered: {ContactName}", contact.Name);
         }
     }
 }

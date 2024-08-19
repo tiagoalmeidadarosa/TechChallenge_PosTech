@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
-using TechChallenge.API.Common.Models.Requests;
+using TechChallenge.API.Register.Models.Requests;
 
-namespace TechChallenge.API.Common.Validators
+namespace TechChallenge.API.Register.Validators
 {
-    public sealed class ContactRequestValidator : AbstractValidator<ContactRequest>
+    public sealed class ContactRequestValidator : AbstractValidator<RegisterContactRequest>
     {
         public ContactRequestValidator()
         {

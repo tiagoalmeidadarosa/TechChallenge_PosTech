@@ -1,9 +1,8 @@
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using TechChallenge.API.Common;
-using TechChallenge.API.Common.Configuration;
 using TechChallenge.Consumer;
+using TechChallenge.Consumer.Configuration;
 using TechChallenge.Consumer.Events;
 using TechChallenge.Core.Interfaces;
 using TechChallenge.Infrastructure;
@@ -17,7 +16,8 @@ builder.Configuration
     .Build();
 
 builder.Services.AddHostedService<Worker>();
-builder.Services.AddRabbitMqService(builder.Configuration);
+
+builder.Services.Configure<RabbitMqConfiguration>(a => builder.Configuration.GetSection(nameof(RabbitMqConfiguration)).Bind(a));
 builder.Services.AddDbContext<AppDbContext>(opt =>
 {
     opt.UseSqlServer(builder.Configuration.GetConnectionString("Contacts"),
@@ -39,15 +39,19 @@ builder.Services.AddMassTransit((x =>
             h.Password(rabbitMqConfiguration.Password);
         });
 
-        cfg.ReceiveEndpoint(rabbitMqConfiguration.QueueName, e =>
+        cfg.ReceiveEndpoint(rabbitMqConfiguration.RegisterQueueName, e =>
         {
             e.ConfigureConsumer<RegisterContact>(context);
         });
+
+        //Todo: Register other queues here
 
         cfg.ConfigureEndpoints(context);
     });
 
     x.AddConsumer<RegisterContact>();
+
+    //Todo: Register other consumers here
 }));
 builder.Services.AddScoped<IContactRepository, ContactRepository>();
 

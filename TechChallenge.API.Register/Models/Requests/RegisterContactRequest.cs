@@ -1,6 +1,6 @@
-﻿namespace TechChallenge.API.Common.Models.Requests
+﻿namespace TechChallenge.API.Register.Models.Requests
 {
-    public class ContactRequest
+    public class RegisterContactRequest
     {
         public string Name { get; set; } = default!;
         public string Phone { get; set; } = default!;

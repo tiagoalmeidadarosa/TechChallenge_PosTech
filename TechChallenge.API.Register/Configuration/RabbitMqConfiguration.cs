@@ -1,4 +1,4 @@
-﻿namespace TechChallenge.API.Common.Configuration
+﻿namespace TechChallenge.API.Register.Configuration
 {
     public class RabbitMqConfiguration
     {
