@@ -39,7 +39,7 @@ builder.Services.AddMassTransit((x =>
             h.Password(rabbitMqConfiguration.Password);
         });
 
-        cfg.ReceiveEndpoint(rabbitMqConfiguration.RegisterQueueName, e =>
+        cfg.ReceiveEndpoint(rabbitMqConfiguration.Queues.Register, e =>
         {
             e.ConfigureConsumer<RegisterContact>(context);
         });
