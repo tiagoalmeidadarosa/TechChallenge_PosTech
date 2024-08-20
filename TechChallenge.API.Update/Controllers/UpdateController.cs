@@ -11,10 +11,10 @@ namespace TechChallenge.API.Update.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public sealed class RegisterController(ILogger<RegisterController> logger, IOptions<RabbitMqConfiguration> options,
+    public sealed class UpdateController(ILogger<UpdateController> logger, IOptions<RabbitMqConfiguration> options,
         IBus bus, IContactRepository contactRepository) : ControllerBase
     {
-        private readonly ILogger<RegisterController> _logger = logger;
+        private readonly ILogger<UpdateController> _logger = logger;
         private readonly RabbitMqConfiguration _configuration = options.Value;
         private readonly IBus _bus = bus;
         private readonly IContactRepository _contactRepository = contactRepository;

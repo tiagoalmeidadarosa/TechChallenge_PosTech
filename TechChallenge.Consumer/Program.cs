@@ -38,15 +38,17 @@ builder.Services.AddMassTransit((x =>
             e.ConfigureConsumer<UpdateContact>(context);
         });
 
-        //Todo: Register other queues here
+        cfg.ReceiveEndpoint(rabbitMqConfiguration.Queues.Delete, e =>
+        {
+            e.ConfigureConsumer<DeleteContact>(context);
+        });
 
         cfg.ConfigureEndpoints(context);
     });
 
     x.AddConsumer<RegisterContact>();
     x.AddConsumer<UpdateContact>();
-
-    //Todo: Register other consumers here
+    x.AddConsumer<DeleteContact>();
 }));
 
 var host = builder.Build();
