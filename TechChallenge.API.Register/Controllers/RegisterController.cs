@@ -42,7 +42,7 @@ namespace TechChallenge.API.Register.Controllers
             var endpoint = await _bus.GetSendEndpoint(new Uri($"queue:{_configuration.QueueName}"));
             await endpoint.Send(contact);
 
-            _logger.LogInformation("Contact sent to the queue");
+            _logger.LogInformation("Register - Contact sent to the queue");
 
             return Accepted();
         }

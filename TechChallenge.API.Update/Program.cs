@@ -1,18 +1,21 @@
 using MassTransit;
 using Microsoft.Extensions.Options;
-using TechChallenge.Consumer;
-using TechChallenge.Consumer.Configuration;
-using TechChallenge.Consumer.Events;
+using TechChallenge.API.Update.Configuration;
 using TechChallenge.Infrastructure;
 
-var builder = Host.CreateApplicationBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration
     .AddJsonFile("appsettings.json")
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
     .Build();
 
-builder.Services.AddHostedService<Worker>();
+// Add services to the container.
+
+builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 builder.Services.Configure<RabbitMqConfiguration>(a => builder.Configuration.GetSection(nameof(RabbitMqConfiguration)).Bind(a));
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -28,26 +31,23 @@ builder.Services.AddMassTransit((x =>
             h.Password(rabbitMqConfiguration.Password);
         });
 
-        cfg.ReceiveEndpoint(rabbitMqConfiguration.Queues.Register, e =>
-        {
-            e.ConfigureConsumer<RegisterContact>(context);
-        });
-
-        cfg.ReceiveEndpoint(rabbitMqConfiguration.Queues.Update, e =>
-        {
-            e.ConfigureConsumer<UpdateContact>(context);
-        });
-
-        //Todo: Register other queues here
-
         cfg.ConfigureEndpoints(context);
     });
-
-    x.AddConsumer<RegisterContact>();
-    x.AddConsumer<UpdateContact>();
-
-    //Todo: Register other consumers here
 }));
 
-var host = builder.Build();
-await host.RunAsync();
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
+
+app.UseAuthorization();
+
+app.MapControllers();
+
+await app.RunAsync();
