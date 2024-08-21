@@ -9,7 +9,7 @@ using TechChallenge.Core.Entities;
 
 namespace TechChallenge.API.Register.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/contacts/[controller]")]
     [ApiController]
     public sealed class RegisterController(ILogger<RegisterController> logger, IOptions<RabbitMqConfiguration> options, IBus bus) : ControllerBase
     {

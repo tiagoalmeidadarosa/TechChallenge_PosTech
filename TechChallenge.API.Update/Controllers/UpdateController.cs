@@ -9,7 +9,7 @@ using TechChallenge.Core.Interfaces;
 
 namespace TechChallenge.API.Update.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/contacts/[controller]")]
     [ApiController]
     public sealed class UpdateController(ILogger<UpdateController> logger, IOptions<RabbitMqConfiguration> options,
         IBus bus, IContactRepository contactRepository) : ControllerBase

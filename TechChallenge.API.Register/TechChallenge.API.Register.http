@@ -1,6 +1,7 @@
-@TechChallenge.API.Register_HostAddress = http://localhost:5201
+@TechChallenge.API.Register_HostAddress = https://localhost:7001
 
-GET {{TechChallenge.API.Register_HostAddress}}/weatherforecast/
-Accept: application/json
+POST {{TechChallenge.API.Register_HostAddress}}/api/contacts/Register
+Content-Type: application/json
+{ "Name" : "Tiago", "Phone": "978345689", "Email": "tiago@gmail.com", "DDD": 11 }
 
 ###

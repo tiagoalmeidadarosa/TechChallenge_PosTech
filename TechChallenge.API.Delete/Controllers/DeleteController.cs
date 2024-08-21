@@ -6,7 +6,7 @@ using TechChallenge.Core.Interfaces;
 
 namespace TechChallenge.API.Delete.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/contacts/[controller]")]
     [ApiController]
     public sealed class DeleteController(ILogger<DeleteController> logger, IOptions<RabbitMqConfiguration> options,
         IBus bus, IContactRepository contactRepository) : ControllerBase
