@@ -1,7 +1,7 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Prometheus;
-using TechChallenge.API.Validators;
+using TechChallenge.API.Models.Requests;
 using TechChallenge.Core.Interfaces;
 using TechChallenge.Infrastructure;
 using TechChallenge.Infrastructure.Repository;
@@ -22,8 +22,7 @@ public class Program
         // Add services to the container.
 
         builder.Services.AddControllers();
-        builder.Services.AddValidatorsFromAssemblyContaining<ContactRequestValidator>();
-        builder.Services.AddMemoryCache();
+        builder.Services.AddValidatorsFromAssemblyContaining<FilteredContactsRequest>();
 
         builder.Services.AddDbContext<AppDbContext>(opt =>
         {
