@@ -25,7 +25,7 @@ namespace TechChallenge.API.Update.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> Put(int id, [FromBody] UpdateContactRequest request)
         {
-            ContactRequestValidator validator = new();
+            UpdateContactRequestValidator validator = new();
             var result = validator.Validate(request);
 
             if (!result.IsValid)

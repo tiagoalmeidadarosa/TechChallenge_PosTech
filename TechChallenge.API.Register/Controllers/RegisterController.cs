@@ -22,7 +22,7 @@ namespace TechChallenge.API.Register.Controllers
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> Post([FromBody] RegisterContactRequest request)
         {
-            ContactRequestValidator validator = new();
+            RegisterContactRequestValidator validator = new();
             var result = validator.Validate(request);
 
             if (!result.IsValid)

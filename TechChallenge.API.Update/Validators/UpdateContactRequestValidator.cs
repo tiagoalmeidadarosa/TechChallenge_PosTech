@@ -1,11 +1,11 @@
 ﻿using FluentValidation;
-using TechChallenge.API.Register.Models.Requests;
+using TechChallenge.API.Update.Models.Requests;
 
-namespace TechChallenge.API.Register.Validators
+namespace TechChallenge.API.Update.Validators
 {
-    public sealed class ContactRequestValidator : AbstractValidator<RegisterContactRequest>
+    public sealed class UpdateContactRequestValidator : AbstractValidator<UpdateContactRequest>
     {
-        public ContactRequestValidator()
+        public UpdateContactRequestValidator()
         {
             RuleFor(x => x.DDD)
                 .InclusiveBetween(11, 99)
