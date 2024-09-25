@@ -4,14 +4,16 @@ namespace TechChallenge.Core.Interfaces
 {
     public interface IContactRepository
     {
-        public Task<IList<Contact>> GetAllAsync(int? ddd);
+        Task<IList<Contact>> GetAllAsync(int? ddd);
 
-        public Task<Contact?> GetByIdAsync(int id);
+        Task<bool> Exists(int id);
 
-        public Task CreateAsync(Contact contact);
+        Task<Contact?> GetByIdAsync(int id);
 
-        public Task UpdateAsync(Contact contact);
+        Task CreateAsync(Contact contact);
 
-        public Task DeleteAsync(Contact contact);
+        Task UpdateAsync(Contact contact);
+
+        Task DeleteAsync(int id);
     }
 }

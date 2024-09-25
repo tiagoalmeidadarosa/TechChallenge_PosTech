@@ -13,7 +13,7 @@ namespace TechChallenge.Consumer.Events
         {
             var contact = context.Message;
 
-            await _contactRepository.DeleteAsync(contact);
+            await _contactRepository.DeleteAsync(contact.Id);
 
             _logger.LogInformation("Contact deleted: {ContactName}", contact.Name);
         }

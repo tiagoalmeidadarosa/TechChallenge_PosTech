@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using TechChallenge.API.Delete.Configuration;
+using TechChallenge.Core.Entities;
 using TechChallenge.Core.Interfaces;
 
 namespace TechChallenge.API.Delete.Controllers
@@ -21,15 +22,15 @@ namespace TechChallenge.API.Delete.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> Delete(int id)
         {
-            var contact = await _contactRepository.GetByIdAsync(id);
+            var contactExists = await _contactRepository.Exists(id);
 
-            if (contact is null)
+            if (!contactExists)
             {
                 return NotFound("Contact not found.");
             }
 
             var endpoint = await _bus.GetSendEndpoint(new Uri($"queue:{_configuration.QueueName}"));
-            await endpoint.Send(contact);
+            await endpoint.Send(new Contact() { Id = id });
 
             _logger.LogInformation("Delete - Contact sent to the queue");
 
