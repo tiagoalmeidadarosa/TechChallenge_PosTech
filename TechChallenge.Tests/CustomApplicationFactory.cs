@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using MassTransit;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -45,6 +46,16 @@ public class CustomApplicationFactory<TProgram> : WebApplicationFactory<TProgram
             {
                 var connection = container.GetRequiredService<DbConnection>();
                 options.UseSqlite(connection);
+            });
+
+            services.AddMassTransitTestHarness(x =>
+            {
+                x.AddDelayedMessageScheduler();                
+                x.UsingInMemory((context, cfg) =>
+                {
+                    cfg.UseDelayedMessageScheduler();
+                    cfg.ConfigureEndpoints(context);
+                });
             });
         });
 

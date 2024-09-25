@@ -3,51 +3,59 @@ using Microsoft.Extensions.Options;
 using TechChallenge.API.Delete.Configuration;
 using TechChallenge.Infrastructure;
 
-var builder = WebApplication.CreateBuilder(args);
+namespace TechChallenge.API.Delete;
 
-builder.Configuration
-    .AddJsonFile("appsettings.json")
-    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
-    .Build();
-
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-builder.Services.Configure<RabbitMqConfiguration>(a => builder.Configuration.GetSection(nameof(RabbitMqConfiguration)).Bind(a));
-builder.Services.AddInfrastructure(builder.Configuration);
-builder.Services.AddMassTransit((x =>
+public class Program
 {
-    x.UsingRabbitMq((context, cfg) =>
+    public static async Task Main(string[] args)
     {
-        var rabbitMqConfiguration = context.GetRequiredService<IOptions<RabbitMqConfiguration>>().Value;
+        var builder = WebApplication.CreateBuilder(args);
 
-        cfg.Host(rabbitMqConfiguration.HostName, "/", h =>
+        builder.Configuration
+            .AddJsonFile("appsettings.json")
+            .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
+            .Build();
+
+        // Add services to the container.
+
+        builder.Services.AddControllers();
+        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
+
+        builder.Services.Configure<RabbitMqConfiguration>(a => builder.Configuration.GetSection(nameof(RabbitMqConfiguration)).Bind(a));
+        builder.Services.AddInfrastructure(builder.Configuration);
+        builder.Services.AddMassTransit((x =>
         {
-            h.Username(rabbitMqConfiguration.Username);
-            h.Password(rabbitMqConfiguration.Password);
-        });
+            x.UsingRabbitMq((context, cfg) =>
+            {
+                var rabbitMqConfiguration = context.GetRequiredService<IOptions<RabbitMqConfiguration>>().Value;
 
-        cfg.ConfigureEndpoints(context);
-    });
-}));
+                cfg.Host(rabbitMqConfiguration.HostName, "/", h =>
+                {
+                    h.Username(rabbitMqConfiguration.Username);
+                    h.Password(rabbitMqConfiguration.Password);
+                });
 
-var app = builder.Build();
+                cfg.ConfigureEndpoints(context);
+            });
+        }));
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
+        var app = builder.Build();
+
+        // Configure the HTTP request pipeline.
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
+
+        app.UseHttpsRedirection();
+
+        app.UseAuthorization();
+
+        app.MapControllers();
+
+        await app.RunAsync();
+    }
 }
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-await app.RunAsync();
