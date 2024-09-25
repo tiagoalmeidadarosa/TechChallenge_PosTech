@@ -1,17 +1,17 @@
-﻿using TechChallenge.API.Models.Requests;
-using TechChallenge.API.Validators;
+﻿using TechChallenge.API.Register.Models.Requests;
+using TechChallenge.API.Register.Validators;
 
 namespace TechChallenge.Tests.Validators;
 
-public class ContactRequestValidatorTests
+public class RegisterContactRequestValidatorTests
 {
-    private readonly ContactRequestValidator _validator = new();
+    private readonly RegisterContactRequestValidator _validator = new();
 
     [Fact]
     public void Validate_ShouldReturnError_WhenDDDIsLessThan11()
     {
         // Arrange
-        var request = new ContactRequest { DDD = 10 };
+        var request = new RegisterContactRequest { DDD = 10 };
 
         // Act
         var result = _validator.Validate(request);
@@ -27,7 +27,7 @@ public class ContactRequestValidatorTests
     public void Validate_ShouldReturnError_WhenNameOrPhoneOrEmailAreEmpty()
     {
         // Arrange
-        var request = new ContactRequest { Name = "", Phone = "" };
+        var request = new RegisterContactRequest { Name = "", Phone = "" };
 
         // Act
         var result = _validator.Validate(request);
@@ -44,7 +44,7 @@ public class ContactRequestValidatorTests
     public void Validate_ShouldReturnError_WhenPhoneOrEmailIsInvalid()
     {
         // Arrange
-        var request = new ContactRequest { Phone = "123", Email = "test" };
+        var request = new RegisterContactRequest { Phone = "123", Email = "test" };
 
         // Act
         var result = _validator.Validate(request);
@@ -60,7 +60,7 @@ public class ContactRequestValidatorTests
     public void Validate_ShouldReturnSuccess()
     {
         // Arrange
-        var request = new ContactRequest
+        var request = new RegisterContactRequest
         {
             DDD = 11,
             Name = "Test",
