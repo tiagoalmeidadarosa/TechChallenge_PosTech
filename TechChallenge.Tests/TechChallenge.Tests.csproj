@@ -23,6 +23,10 @@
   </ItemGroup>
 
   <ItemGroup>
+	<ProjectReference Include="..\TechChallenge.API.Delete\TechChallenge.API.Delete.csproj" />
+	<ProjectReference Include="..\TechChallenge.API.Register\TechChallenge.API.Register.csproj" />
+	<ProjectReference Include="..\TechChallenge.API.Update\TechChallenge.API.Update.csproj" />
+	<ProjectReference Include="..\TechChallenge.Consumer\TechChallenge.Consumer.csproj" />
 	<ProjectReference Include="..\TechChallenge.Core\TechChallenge.Core.csproj" />
 	<ProjectReference Include="..\TechChallenge.Infrastructure\TechChallenge.Infrastructure.csproj" />
     <ProjectReference Include="..\TechChallenge\TechChallenge.API.csproj" />
