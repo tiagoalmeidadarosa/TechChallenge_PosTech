@@ -1,5 +1,6 @@
 using MassTransit;
 using Microsoft.Extensions.Options;
+using Prometheus;
 using TechChallenge.API.Register.Configuration;
 
 namespace TechChallenge.API.Register;
@@ -39,20 +40,21 @@ public class Program
             });
         });
 
+        builder.Services.UseHttpClientMetrics();
+
         var app = builder.Build();
 
-        // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
+        app.UseSwagger();
+        app.UseSwaggerUI();
 
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
 
         app.MapControllers();
+
+        app.UseMetricServer();
+        app.UseHttpMetrics();
 
         await app.RunAsync();
     }
