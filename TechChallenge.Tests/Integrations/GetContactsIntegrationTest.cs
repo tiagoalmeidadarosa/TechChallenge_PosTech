@@ -85,7 +85,7 @@ public class GetContactsIntegrationTest : IClassFixture<CustomApplicationFactory
         var contact = await response.Content.ReadAs<ContactResponse>();
 
         // Assert
-        Assert.Equal(HttpStatusCode.NetworkAuthenticationRequired, response.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.NotNull(contact);
         Assert.Equal(1, contact.Id);
     }
