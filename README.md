@@ -7,3 +7,7 @@ Fase 1:
 
 Fase 2:
 ![image](https://github.com/tiagoalmeidadarosa/TechChallenge_Fase01/assets/20598266/adbe80ba-8837-4fcd-b92a-7b09d2483d97)
+
+Fase 3:
+
+![image](https://github.com/user-attachments/assets/aef55a0a-79a4-4f3f-b487-6b6e470b3201)
