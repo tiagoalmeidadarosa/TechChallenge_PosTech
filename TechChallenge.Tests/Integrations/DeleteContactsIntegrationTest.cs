@@ -35,7 +35,7 @@ public class DeleteContactsIntegrationTest : IClassFixture<CustomApplicationFact
         var responseDelete = await _client.DeleteAsync("/api/contacts/delete/2");
 
         // Assert
-        Assert.Equal(HttpStatusCode.InternalServerError, responseDelete.StatusCode);
+        Assert.Equal(HttpStatusCode.Accepted, responseDelete.StatusCode);
     }
 
     [Fact]
