@@ -13,21 +13,97 @@ services:
     expose:
       - 1433
       
-  tech-challenge-api:
-    image: ${DOCKER_REGISTRY-}tech-challenge-api
+  rabbitmq:
+    image: masstransit/rabbitmq
+    container_name: rabbitmq
     ports:
-      - 8080:8080
+        - 5672:5672
+        - 15672:15672
+    networks:
+      - mynw
+    expose:
+      - 5672
+      - 15672
+      
+  tech-challenge-api:
+    image: tech-challenge-api
+    ports:
+      - 5001:5001
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: ./TechChallenge/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTP_PORTS=5001    
     depends_on:
       - sqlserver
     networks:
       - mynw
+
+  tech-challenge-api-delete:
+    image: ${DOCKER_REGISTRY-}tech-challenge-api-delete
+    ports:
+      - 5002:5002
+    build:
+      context: .
+      dockerfile: ./TechChallenge.API.Delete/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=5002
+    depends_on:
+      - sqlserver
+      - rabbitmq
+    networks:
+      - mynw
+
+  tech-challenge-api-update:
+    image: ${DOCKER_REGISTRY-}tech-challenge-api-update
+    ports:
+      - 5003:5003
+    build:
+      context: .
+      dockerfile: ./TechChallenge.API.Update/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=5003
+    depends_on:
+      - sqlserver
+      - rabbitmq
+    networks:
+      - mynw
       
+  tech-challenge-api-register:
+    image: ${DOCKER_REGISTRY-}tech-challenge-api-register
+    ports:
+      - 5004:5004
+    build:
+      context: .
+      dockerfile: ./TechChallenge.API.Register/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=5004
+    depends_on:
+      - sqlserver
+      - rabbitmq
+    networks:
+      - mynw
+
+  tech-challenge-api-consumer:
+    image: ${DOCKER_REGISTRY-}tech-challenge-api-consumer
+    ports:
+      - 5000:5000
+    build:
+      context: .
+      dockerfile: ./TechChallenge.Consumer/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=5000
+    depends_on:
+      - sqlserver
+      - rabbitmq
+    networks:
+      - mynw
+
   prometheus:
     image: prom/prometheus
     ports:
@@ -39,6 +115,9 @@ services:
     depends_on:
         - sqlserver
         - tech-challenge-api
+        - tech-challenge-api-delete
+        - tech-challenge-api-update
+        - tech-challenge-api-register
     networks:
       - mynw
       

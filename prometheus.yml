@@ -3,4 +3,9 @@ global:
 scrape_configs:
   - job_name: 'tech-challenge-api-read-prometheus'
     static_configs:
-    - targets: ['tech-challenge-api:8080']
+    - targets: [
+        'tech-challenge-api:5001', 
+        'tech-challenge-api-delete:5002',
+        'tech-challenge-api-update:5003',
+        'tech-challenge-api-register:5004',
+      ]

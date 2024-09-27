@@ -1,0 +1,6 @@
+@TechChallenge.API.Delete_HostAddress = https://localhost:7290
+
+DELETE {{TechChallenge.API.Delete_HostAddress}}/api/contacts/Delete/1
+Accept: application/json
+
+###

@@ -1,0 +1,7 @@
+@TechChallenge.API.Update_HostAddress = https://localhost:7225
+
+PUT {{TechChallenge.API.Update_HostAddress}}/api/contacts/Update/1
+Content-Type: application/json
+{ "Name" : "Tiago", "Phone": "978345689", "Email": "tiago@gmail.com", "DDD": 11 }
+
+###
