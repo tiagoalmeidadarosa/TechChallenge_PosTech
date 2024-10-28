@@ -1,0 +1,49 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    io.kompose.service: sqlserver
+  name: sqlserver
+spec:
+  ports:
+    - name: "14433"
+      port: 14433
+      targetPort: 1433
+    - name: "1433"
+      port: 1433
+      targetPort: 1433
+  selector:
+    io.kompose.service: sqlserver
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: sqlserver
+  name: sqlserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: sqlserver
+  template:
+    metadata:
+      labels:
+        io.kompose.service: sqlserver
+    spec:
+      containers:
+        - env:
+            - name: ACCEPT_EULA
+              value: "Y"
+            - name: MSSQL_PID
+              value: Developer
+            - name: SA_PASSWORD
+              value: SqlServer2019!
+          image: mcr.microsoft.com/mssql/server:2019-latest
+          name: sqlserver
+          ports:
+            - containerPort: 1433
+              protocol: TCP
+      restartPolicy: Always

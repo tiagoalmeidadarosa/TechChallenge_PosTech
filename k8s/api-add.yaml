@@ -1,0 +1,45 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    io.kompose.service: tech-challenge-api-register
+  name: tech-challenge-api-register
+spec:
+  ports:
+    - name: "5004"
+      port: 5004
+      targetPort: 5004
+  selector:
+    io.kompose.service: tech-challenge-api-register
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: tech-challenge-api-register
+  name: tech-challenge-api-register
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: tech-challenge-api-register
+  template:
+    metadata:
+      labels:
+        io.kompose.service: tech-challenge-api-register
+    spec:
+      containers:
+        - env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Production
+            - name: ASPNETCORE_HTTP_PORTS
+              value: "5004"
+          image: tech-challenge-api-register
+          name: tech-challenge-api-register
+          ports:
+            - containerPort: 5004
+              protocol: TCP
+      restartPolicy: Always

@@ -1,0 +1,44 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    io.kompose.service: tech-challenge-api
+  name: tech-challenge-api
+spec:
+  ports:
+    - name: "5001"
+      port: 5001
+      targetPort: 5001
+  selector:
+    io.kompose.service: tech-challenge-api
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: tech-challenge-api
+  name: tech-challenge-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: tech-challenge-api
+  template:
+    metadata:
+      labels:
+        io.kompose.service: tech-challenge-api
+    spec:
+      containers:
+        - env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Production
+            - name: ASPNETCORE_HTTP_PORTS
+              value: "5001"
+          image: tech-challenge-api
+          name: tech-challenge-api
+          ports:
+            - containerPort: 5001
+              protocol: TCP
+      restartPolicy: Always

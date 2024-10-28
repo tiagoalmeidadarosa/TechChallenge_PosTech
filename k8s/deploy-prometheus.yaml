@@ -1,0 +1,70 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    io.kompose.service: prometheus
+  name: prometheus
+spec:
+  ports:
+    - name: "9091"
+      port: 9091
+      targetPort: 9090
+  selector:
+    io.kompose.service: prometheus
+
+---
+
+apiVersion: v1
+data:
+  prometheus.yml: "global:\n  scrape_interval:     10s \nscrape_configs:\n  - job_name: 'tech-challenge-api-read-prometheus'\n    static_configs:\n    - targets: [\n        'tech-challenge-api:5001', \n        'tech-challenge-api-delete:5002',\n        'tech-challenge-api-update:5003',\n        'tech-challenge-api-register:5004',\n      ]"
+kind: ConfigMap
+metadata:
+  annotations:
+    use-subpath: "true"
+  labels:
+    io.kompose.service: prometheus
+  name: prometheus-cm0
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: prometheus
+  name: prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: prometheus
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        io.kompose.service: prometheus
+    spec:
+      containers:
+        - args:
+            - --config.file=/etc/prometheus/prometheus.yml
+          image: prom/prometheus
+          name: prometheus
+          ports:
+            - containerPort: 9090
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /etc/prometheus/prometheus.yml
+              name: prometheus-cm0
+              readOnly: true
+              subPath: prometheus.yml
+      restartPolicy: Always
+      volumes:
+        - configMap:
+            items:
+              - key: prometheus.yml
+                path: prometheus.yml
+            name: prometheus-cm0
+          name: prometheus-cm0
+

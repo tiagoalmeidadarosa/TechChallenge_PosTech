@@ -1,0 +1,45 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    io.kompose.service: tech-challenge-api-delete
+  name: tech-challenge-api-delete
+spec:
+  ports:
+    - name: "5002"
+      port: 5002
+      targetPort: 5002
+  selector:
+    io.kompose.service: tech-challenge-api-delete
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: tech-challenge-api-delete
+  name: tech-challenge-api-delete
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: tech-challenge-api-delete
+  template:
+    metadata:
+      labels:
+        io.kompose.service: tech-challenge-api-delete
+    spec:
+      containers:
+        - env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Production
+            - name: ASPNETCORE_HTTP_PORTS
+              value: "5002"
+          image: tech-challenge-api-delete
+          name: tech-challenge-api-delete
+          ports:
+            - containerPort: 5002
+              protocol: TCP
+      restartPolicy: Always
