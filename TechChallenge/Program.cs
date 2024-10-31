@@ -1,10 +1,7 @@
 using FluentValidation;
-using Microsoft.EntityFrameworkCore;
 using Prometheus;
 using TechChallenge.API.Models.Requests;
-using TechChallenge.Core.Interfaces;
 using TechChallenge.Infrastructure;
-using TechChallenge.Infrastructure.Repository;
 
 namespace TechChallenge.API;
 
@@ -24,16 +21,7 @@ public class Program
         builder.Services.AddControllers();
         builder.Services.AddValidatorsFromAssemblyContaining<FilteredContactsRequest>();
 
-        builder.Services.AddDbContext<AppDbContext>(opt =>
-        {
-            opt.UseSqlServer(configuration.GetConnectionString("Contacts"),
-                sqlServerOptions =>
-                {
-                    sqlServerOptions.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
-                    sqlServerOptions.EnableRetryOnFailure(maxRetryCount: 4, maxRetryDelay: TimeSpan.FromSeconds(3), errorNumbersToAdd: []);
-                });
-        });
-        builder.Services.AddScoped<IContactRepository, ContactRepository>();
+        builder.Services.AddInfrastructure(builder.Configuration);
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
