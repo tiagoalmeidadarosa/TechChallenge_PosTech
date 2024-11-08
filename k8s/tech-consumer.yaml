@@ -36,7 +36,7 @@ spec:
               value: Production
             - name: ASPNETCORE_HTTP_PORTS
               value: "5000"
-          image: tech-challenge-api-consumer
+          image: tiagoalmeidadarosa/tech-challenge-api-consumer
           name: tech-challenge-api-consumer
           ports:
             - containerPort: 5000

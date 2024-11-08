@@ -37,7 +37,7 @@ spec:
               value: Production
             - name: ASPNETCORE_HTTP_PORTS
               value: "5002"
-          image: tech-challenge-api-delete
+          image: tiagoalmeidadarosa/tech-challenge-api-delete
           name: tech-challenge-api-delete
           ports:
             - containerPort: 5002

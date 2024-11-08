@@ -36,7 +36,7 @@ spec:
               value: Production
             - name: ASPNETCORE_HTTP_PORTS
               value: "5001"
-          image: tech-challenge-api
+          image: tiagoalmeidadarosa/tech-challenge-api
           name: tech-challenge-api
           ports:
             - containerPort: 5001
