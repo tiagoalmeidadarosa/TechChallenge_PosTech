@@ -15,15 +15,27 @@ spec:
       targetPort: 1433
   selector:
     io.kompose.service: sqlserver
+---
 
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sqlserver-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   labels:
     io.kompose.service: sqlserver
   name: sqlserver
 spec:
+  serviceName: "sqlserver"
   replicas: 1
   selector:
     matchLabels:
@@ -46,4 +58,11 @@ spec:
           ports:
             - containerPort: 1433
               protocol: TCP
+          volumeMounts:
+            - name: mssql-storage
+              mountPath: "/var/opt/mssql"
+      volumes:
+        - name: mssql-storage
+          persistentVolumeClaim:
+            claimName: sqlserver-pvc
       restartPolicy: Always
