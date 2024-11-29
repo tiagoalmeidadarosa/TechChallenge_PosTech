@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+metadata:
+  name: tech-challenge
+
+resources:
+  - k8s/deploy-sqlserver.yaml
+  - k8s/deploy-rabbitmq.yaml
+  - k8s/api-add.yaml
+  - k8s/api-delete.yaml
+  - k8s/api-get.yaml
+  - k8s/api-update.yaml
+  - k8s/tech-consumer.yaml
+  - k8s/deploy-prometheus.yaml
+  - k8s/deploy-grafana.yaml
